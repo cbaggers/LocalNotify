@@ -1,0 +1,25 @@
+{
+  "Description": "Extended support for Local Notifications On Mobile",
+  "Packages": [
+    "Uno.Collections",
+    "Uno.Threading",
+    "Fuse.Platform",
+    "Fuse.Controls",
+    "Fuse.Elements",
+    "Fuse.Reactive",
+    "Fuse.Scripting",
+    "Fuse.Common"
+  ],
+  "Includes": [
+    "iOS/Impl.uno:Source",
+    "iOS/Impl.uxl:Extensions",
+    "iOS/AppDelegateLocalNotify.h:CHeader:iOS",
+    "iOS/AppDelegateLocalNotify.mm:CSource:iOS",
+    "Android/Impl.uno:Source",
+    "Android/Impl.uxl:Extensions",
+    "Android/LocalNotificationReceiver.java:File",
+    "Common.uno:Source",
+    "JS.uno:Source",
+    "Android/Assets/DefaultIcon.png:File"
+  ]
+}
