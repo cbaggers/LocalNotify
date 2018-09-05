@@ -6,6 +6,7 @@ namespace LocalNotify
 {
     public static class Notify
     {
+	static bool _hasInformedNotSupported = false;
         static bool _registered = false;
 
         extern(Android)
@@ -23,6 +24,15 @@ namespace LocalNotify
                 _registered = true;
             }
         }
+
+	static void AnnounceNotSupported()
+	{
+	    if (!_hasInformedNotSupported)
+	    {
+		_hasInformedNotSupported = true;
+		debug_log "Sorry LocalNotify is not supported on this backend";
+	    }
+	}
 
         //----------------------------------------------------------------------
 
@@ -48,7 +58,7 @@ namespace LocalNotify
         public static extern(!MOBILE) void Later(int secondsFromNow, string title, string body, string payload, bool sound=true,
                                                  int badgeNumber=0)
         {
-            debug_log "Sorry LocalNotify is not supported on this backend";
+            AnnounceNotSupported();
         }
 
         //----------------------------------------------------------------------
@@ -68,7 +78,7 @@ namespace LocalNotify
         public static extern(!MOBILE) void At(string dateTime, string title, string body, string payload, bool sound=true,
 					      int badgeNumber=0)
         {
-            debug_log "Sorry LocalNotify is not supported on this backend";
+            AnnounceNotSupported();
         }
 
         //----------------------------------------------------------------------
