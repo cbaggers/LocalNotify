@@ -10,9 +10,9 @@ using Uno.Compiler.ExportTargetInterop;
 
 namespace LocalNotify
 {
-	[Require("Entity", "LocalNotify.iOSImpl.OnReceivedLocalNotification(string)")]
-	[Require("uContext.SourceFile.DidFinishLaunching", "[self initializeLocalNotifications:[notification object]];")]
-	[Require("uContext.SourceFile.Declaration", "#include <iOS/AppDelegateLocalNotify.h>")]
+    [Require("Entity", "LocalNotify.iOSImpl.OnReceivedLocalNotification(string)")]
+    [Require("uContext.SourceFile.DidFinishLaunching", "[self initializeLocalNotifications:[notification object]];")]
+    [Require("uContext.SourceFile.Declaration", "#include <iOS/AppDelegateLocalNotify.h>")]
     internal extern(iOS) static class iOSImpl
     {
         [Foreign(Language.ObjC)]
@@ -33,32 +33,32 @@ namespace LocalNotify
             [[UIApplication sharedApplication] scheduleLocalNotification:notification];
         @}
 
-		public static event EventHandler<string> ReceivedLocalNotification;
-		static List<string> DelayedLocalNotifications = new List<string>();
+        public static event EventHandler<string> ReceivedLocalNotification;
+        static List<string> DelayedLocalNotifications = new List<string>();
 
-		internal static void OnReceivedLocalNotification(string notification)
-		{
-			if (Uno.Platform.CoreApp.State == ApplicationState.Foreground ||
-				Uno.Platform.CoreApp.State == ApplicationState.Interactive)
-			{
-				EventHandler<string> handler = ReceivedLocalNotification;
-				if (handler != null)
-					handler(null, notification);
-			}
-			else
-			{
-				DelayedLocalNotifications.Add(notification);
-				Uno.Platform.CoreApp.EnteringForeground += DispatchDelayedLocalNotifications;
-			}
-		}
-		private static void DispatchDelayedLocalNotifications(ApplicationState state)
-		{
-			EventHandler<string> handler = ReceivedLocalNotification;
-			if (handler != null)
-				foreach (var n in DelayedLocalNotifications)
-					handler(null, n);
-			DelayedLocalNotifications.Clear();
-			Uno.Platform.CoreApp.EnteringForeground -= DispatchDelayedLocalNotifications;
-		}
-	}
+        internal static void OnReceivedLocalNotification(string notification)
+        {
+            if (Uno.Platform.CoreApp.State == ApplicationState.Foreground ||
+                Uno.Platform.CoreApp.State == ApplicationState.Interactive)
+            {
+                EventHandler<string> handler = ReceivedLocalNotification;
+                if (handler != null)
+                    handler(null, notification);
+            }
+            else
+            {
+                DelayedLocalNotifications.Add(notification);
+                Uno.Platform.CoreApp.EnteringForeground += DispatchDelayedLocalNotifications;
+            }
+        }
+        private static void DispatchDelayedLocalNotifications(ApplicationState state)
+        {
+            EventHandler<string> handler = ReceivedLocalNotification;
+            if (handler != null)
+                foreach (var n in DelayedLocalNotifications)
+                    handler(null, n);
+            DelayedLocalNotifications.Clear();
+            Uno.Platform.CoreApp.EnteringForeground -= DispatchDelayedLocalNotifications;
+        }
+    }
 }

@@ -24,6 +24,7 @@ namespace LocalNotify
                     "android.graphics.BitmapFactory",
                     "android.graphics.Color",
                     "android.media.RingtoneManager",
+                    "java.util.Calendar",
                     "android.net.Uri",
                     "android.os.Build",
                     "android.util.Log")]
@@ -44,14 +45,14 @@ namespace LocalNotify
         }
 
         static void OnEnteringInteractive(ApplicationState newState)
-		{
-			NoteInteractivity(true);
-		}
+        {
+            NoteInteractivity(true);
+        }
 
         static void OnExitedInteractive(ApplicationState newState)
-		{
+        {
             NoteInteractivity(false);
-		}
+        }
 
         [Foreign(Language.Java), ForeignFixedName]
         static void NoteInteractivity(bool isItInteractive)
@@ -92,13 +93,9 @@ namespace LocalNotify
         [Foreign(Language.Java)]
         public static void Later(string title, string body, bool sound, string strPayload, int delaySeconds=0)
         @{
-            android.app.Activity currentActivity = com.fuse.Activity.getRootActivity();
-            android.app.AlarmManager alarmManager =
-                (android.app.AlarmManager)currentActivity.getSystemService(android.content.Context.ALARM_SERVICE);
-            android.app.NotificationManager notificationManager =
-                (android.app.NotificationManager)currentActivity.getSystemService(android.content.Context.NOTIFICATION_SERVICE);
-            android.content.Intent intent =
-                new android.content.Intent(currentActivity, com.fusedCompound.LocalNotify.LocalNotificationReceiver.class);
+        android.app.Activity currentActivity = com.fuse.Activity.getRootActivity();
+        android.content.Intent intent =
+        new android.content.Intent(currentActivity, com.fusedCompound.LocalNotify.LocalNotificationReceiver.class);
 
             int id = @{NextID():Call()};
 
@@ -108,8 +105,10 @@ namespace LocalNotify
             intent.putExtra("sound", sound);
             intent.putExtra(@{ACTION}, strPayload.toString());
 
-            alarmManager.set(0, System.currentTimeMillis() + (delaySeconds * 1000),
-                             android.app.PendingIntent.getBroadcast(currentActivity, id, intent, 0));
+        Calendar alarmTime = Calendar.getInstance();
+        alarmTime.add(Calendar.SECOND, delaySeconds);
+
+        com.fusedCompound.LocalNotify.AlarmUtils.addAlarm(currentActivity, intent, id, alarmTime);
         @}
 
         [Foreign(Language.Java), ForeignFixedNameAttribute]

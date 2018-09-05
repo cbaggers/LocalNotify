@@ -1,5 +1,6 @@
 <Extensions Backend="CPlusPlus" Condition="Android">
     <ProcessFile Name="LocalNotificationReceiver.java" TargetName="@(Java.SourceDirectory)/com/fusedCompound/LocalNotify/LocalNotificationReceiver.java" />
+    <ProcessFile Name="AlarmUtils.java" TargetName="@(Java.SourceDirectory)/com/fusedCompound/LocalNotify/AlarmUtils.java" />
     <Require AndroidManifest.ApplicationElement><![CDATA[
         <receiver android:name="com.fusedCompound.LocalNotify.LocalNotificationReceiver">
             <intent-filter>

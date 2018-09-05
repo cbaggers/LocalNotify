@@ -17,6 +17,7 @@
     "iOS/AppDelegateLocalNotify.mm:CSource:iOS",
     "Android/Impl.uno:Source",
     "Android/Impl.uxl:Extensions",
+    "Android/AlarmUtils.java:File",
     "Android/LocalNotificationReceiver.java:File",
     "Common.uno:Source",
     "JS.uno:Source",

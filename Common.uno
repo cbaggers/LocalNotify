@@ -120,7 +120,11 @@ namespace LocalNotify
         [Foreign(Language.Java)]
         public extern(Android) static void CancelPendingNotifications()
         @{
-	    // foo
+	    android.app.Activity activity = com.fuse.Activity.getRootActivity();
+	    android.content.Intent intent =
+        	new android.content.Intent(activity, com.fusedCompound.LocalNotify.LocalNotificationReceiver.class);
+	    debug_log("should cancel all pending");
+	    com.fusedCompound.LocalNotify.AlarmUtils.cancelAllAlarms(activity, intent);
         @}
 
         public extern(!iOS && !Android) static void CancelPendingNotifications() { }
