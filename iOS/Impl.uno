@@ -16,6 +16,12 @@ namespace LocalNotify
     internal extern(iOS) static class iOSImpl
     {
         [Foreign(Language.ObjC)]
+        public static void At(string title, string body, bool sound, string strPayload, string dateTime)
+        @{
+
+        @}
+
+        [Foreign(Language.ObjC)]
         internal static void Later(string title, string body, bool sound, string strPayload,
                                    int delaySeconds=0, int badgeNumber=0)
         @{

@@ -91,6 +91,12 @@ namespace LocalNotify
         }
 
         [Foreign(Language.Java)]
+        public static void At(string title, string body, bool sound, string strPayload, string dateTime)
+        @{
+
+        @}
+
+        [Foreign(Language.Java)]
         public static void Later(string title, string body, bool sound, string strPayload, int delaySeconds=0)
         @{
         android.app.Activity currentActivity = com.fuse.Activity.getRootActivity();

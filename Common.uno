@@ -53,7 +53,27 @@ namespace LocalNotify
 
         //----------------------------------------------------------------------
 
-        static List<KeyValuePair<string,bool>> _pendingNotifications = new List<KeyValuePair<string,bool>>();
+        public static extern(android) void At(string dateTime, string title, string body, string payload, bool sound=true,
+					      int badgeNumber=0)
+        {
+            AndroidImpl.At(title, body, sound, payload, dateTime);
+        }
+
+        public static extern(iOS) void At(string dateTime, string title, string body, string payload, bool sound=true,
+					  int badgeNumber=0)
+        {
+            iOSImpl.At(title, body, sound, payload, dateTime, badgeNumber);
+        }
+
+        public static extern(!MOBILE) void At(string dateTime, string title, string body, string payload, bool sound=true,
+					      int badgeNumber=0)
+        {
+            debug_log "Sorry LocalNotify is not supported on this backend";
+        }
+
+        //----------------------------------------------------------------------
+
+	static List<KeyValuePair<string,bool>> _pendingNotifications = new List<KeyValuePair<string,bool>>();
 
         static event EventHandler<KeyValuePair<string,bool>> _receivedNotification;
 
