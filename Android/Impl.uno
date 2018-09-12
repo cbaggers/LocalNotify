@@ -70,15 +70,15 @@ namespace LocalNotify
                         String body = newIntent.getStringExtra("bbody");
                         String payload = newIntent.getStringExtra(@{ACTION});
                         String result = "{ 'title': '" + title + "', 'body': '" + body + "', 'payload': '" + payload + "' }";
-                        @{NotificationRecieved(string):Call(result)};
+                        @{NotificationRecieved(string,bool):Call(result, true)};
                     }
                 },
                 @{ACTION});
         @}
 
-        static void NotificationRecieved(string payload)
+        static void NotificationRecieved(string payload, bool fromNotifBar)
         {
-            LocalNotify.Notify.OnReceived(null, payload);
+            LocalNotify.Notify.OnReceived(null, new KeyValuePair<string,bool>(payload, fromNotifBar));
         }
 
         static string ACTION = "com.fusedCompound.LocalNotify.strPayload";
@@ -128,7 +128,7 @@ namespace LocalNotify
             if (com.fusedCompound.LocalNotify.LocalNotificationReceiver.InForeground)
             {
                 String result = "{ 'title': '" + title + "', 'body': '" + body + "', 'payload': '" + payload + "' }";
-                @{NotificationRecieved(string):Call(result)};
+                @{NotificationRecieved(string,bool):Call(result, false)};
             } else {
                 Intent notificationIntent = new Intent(context, @(Activity.Package).@(Activity.Name).class);
                 notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

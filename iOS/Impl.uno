@@ -10,7 +10,7 @@ using Uno.Compiler.ExportTargetInterop;
 
 namespace LocalNotify
 {
-    [Require("Entity", "LocalNotify.iOSImpl.OnReceivedLocalNotification(string)")]
+    [Require("Entity", "LocalNotify.iOSImpl.OnReceivedLocalNotification(string, bool)")]
     [Require("uContext.SourceFile.DidFinishLaunching", "[self initializeLocalNotifications:[notification object]];")]
     [Require("uContext.SourceFile.Declaration", "#include <iOS/AppDelegateLocalNotify.h>")]
     internal extern(iOS) static class iOSImpl
@@ -33,27 +33,27 @@ namespace LocalNotify
             [[UIApplication sharedApplication] scheduleLocalNotification:notification];
         @}
 
-        public static event EventHandler<string> ReceivedLocalNotification;
-        static List<string> DelayedLocalNotifications = new List<string>();
+        public static event EventHandler<KeyValuePair<string,bool>> ReceivedLocalNotification;
+        static List<KeyValuePair<string,bool>> DelayedLocalNotifications = new List<KeyValuePair<string,bool>>();
 
-        internal static void OnReceivedLocalNotification(string notification)
+        internal static void OnReceivedLocalNotification(string notification, bool fromNotifBar)
         {
             if (Uno.Platform.CoreApp.State == ApplicationState.Foreground ||
                 Uno.Platform.CoreApp.State == ApplicationState.Interactive)
             {
-                EventHandler<string> handler = ReceivedLocalNotification;
+                var handler = ReceivedLocalNotification;
                 if (handler != null)
-                    handler(null, notification);
+                    handler(null, new KeyValuePair<string,bool>(notification, fromNotifBar));
             }
             else
             {
-                DelayedLocalNotifications.Add(notification);
+                DelayedLocalNotifications.Add(new KeyValuePair<string,bool>(notification, fromNotifBar));
                 Uno.Platform.CoreApp.EnteringForeground += DispatchDelayedLocalNotifications;
             }
         }
         private static void DispatchDelayedLocalNotifications(ApplicationState state)
         {
-            EventHandler<string> handler = ReceivedLocalNotification;
+            var handler = ReceivedLocalNotification;
             if (handler != null)
                 foreach (var n in DelayedLocalNotifications)
                     handler(null, n);

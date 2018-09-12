@@ -50,9 +50,9 @@ namespace LocalNotify
         /**
             @scriptevent receivedMessage
         */
-        void OnReceived(object sender, string message)
+        void OnReceived(object sender, KeyValuePair<string,bool>message)
         {
-            Emit("receivedMessage", message);
+            Emit("receivedMessage", message.Key, message.Value);
         }
 
         /** Displays a notification to the user after the time specified by `secondsFromNow` has passed.

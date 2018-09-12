@@ -53,11 +53,11 @@ namespace LocalNotify
 
         //----------------------------------------------------------------------
 
-        static List<string> _pendingNotifications = new List<string>();
+        static List<KeyValuePair<string,bool>> _pendingNotifications = new List<KeyValuePair<string,bool>>();
 
-        static event EventHandler<string> _receivedNotification;
+        static event EventHandler<KeyValuePair<string,bool>> _receivedNotification;
 
-        public static event EventHandler<string> Received
+        public static event EventHandler<KeyValuePair<string,bool>> Received
         {
             add
             {
@@ -71,13 +71,14 @@ namespace LocalNotify
             }
         }
 
-        internal static void OnReceived(object sender, string message)
+        internal static void OnReceived(object sender, KeyValuePair<string,bool> notification)
         {
             var x = _receivedNotification;
-            if (x!=null)
-                x(null, message);
+            if (x!=null){
+                x(null, notification);
+            }
             else
-                _pendingNotifications.Add(message);
+                _pendingNotifications.Add(notification);
         }
 
         //----------------------------------------------------------------------

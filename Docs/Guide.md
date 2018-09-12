@@ -23,8 +23,8 @@ This is a full Fuse app that uses Local Notifications:
         <JavaScript>
             var LocalNotify = require("FuseJS/LocalNotifications");
 
-            LocalNotify.on("receivedMessage", function(payload) {
-                console.log("Received Local Notification: " + payload);
+            LocalNotify.on("receivedMessage", function(payload, fromNotifBar) {
+                console.log("Received Local Notification: " + payload + " from bar?:" + fromNotifBar);
                 LocalNotify.clearAllNotifications();
             });
 

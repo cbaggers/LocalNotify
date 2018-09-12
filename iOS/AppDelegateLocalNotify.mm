@@ -35,7 +35,8 @@
 	{
 		NSString* nsJsonPayload = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 		@{Uno.String} jsonPayload = uPlatform::iOS::ToUno(nsJsonPayload);
-		@{LocalNotify.iOSImpl.OnReceivedLocalNotification(string):Call(jsonPayload)};
+		bool fromNotifBar = application.applicationState != UIApplicationStateActive;
+		@{LocalNotify.iOSImpl.OnReceivedLocalNotification(string, bool):Call(jsonPayload, fromNotifBar)};
 	}
 }
 
