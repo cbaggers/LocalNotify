@@ -9,6 +9,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,6 +21,21 @@ import java.util.List;
 public class AlarmUtils {
 
     private static final String sTagAlarms = ":alarms";
+
+    public static String MakePayloadString(String title, String body, String payload)
+    {
+        JSONObject jsonObj = new JSONObject();
+        try
+        {
+            jsonObj.put("title", (title == null ? "" : title));
+            jsonObj.put("body", (body == null ? "" : body));
+            jsonObj.put("payload", (payload == null ? "" : payload));
+        }
+        catch (Exception e)
+        {
+        }
+        return jsonObj.toString();
+    }
 
     public static void addAlarm(Context context, Intent intent, int notificationId, Calendar calendar) {
 

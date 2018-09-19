@@ -69,7 +69,7 @@ namespace LocalNotify
                         String title = newIntent.getStringExtra("title");
                         String body = newIntent.getStringExtra("bbody");
                         String payload = newIntent.getStringExtra(@{ACTION});
-                        String result = "{ 'title': '" + title + "', 'body': '" + body + "', 'payload': '" + payload + "' }";
+			String result = com.fusedCompound.LocalNotify.AlarmUtils.MakePayloadString(title, body, payload);
                         @{NotificationRecieved(string,bool):Call(result, true)};
                     }
                 },
@@ -127,7 +127,7 @@ namespace LocalNotify
 
             if (com.fusedCompound.LocalNotify.LocalNotificationReceiver.InForeground)
             {
-                String result = "{ 'title': '" + title + "', 'body': '" + body + "', 'payload': '" + payload + "' }";
+                String result = com.fusedCompound.LocalNotify.AlarmUtils.MakePayloadString(title, body, payload);
                 @{NotificationRecieved(string,bool):Call(result, false)};
             } else {
                 Intent notificationIntent = new Intent(context, @(Activity.Package).@(Activity.Name).class);
