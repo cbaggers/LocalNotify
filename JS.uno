@@ -32,7 +32,7 @@ namespace LocalNotify
 
         {
             if(_instance != null) return;
-            Resource.SetGlobalKey(_instance = this, "LocalNotify");
+            Uno.UX.Resource.SetGlobalKey(_instance = this, "LocalNotify");
 
             var onReceivedMessage = new NativeEvent("onReceivedMessage");
 
@@ -71,6 +71,7 @@ namespace LocalNotify
             if(args.Length > 0)
             {
                 var secondsFromNow = GetInt(args[0], "secondsFromNow");
+                var channelInfo = (args.Length > 6) ? (Fuse.Scripting.Object)args[6] : null;
                 var badgeNumber = (args.Length > 5) ? GetInt(args[5], "badgeNumber") : 0;
                 var hasSoundArg = (args.Length > 4);
 
@@ -80,7 +81,8 @@ namespace LocalNotify
                     (string)args[2],  // body
                     (args[3]!=null ? (string)args[3] : ""), // payload
                     (hasSoundArg ? (bool)args[4] : true),   // sound
-                    badgeNumber);     // badgeNumber
+                    badgeNumber, // badgeNumber
+                    channelInfo);
             }
             return null;
         }
@@ -120,7 +122,7 @@ namespace LocalNotify
             return null;
         }
 
-	public object CancelPendingNotifications(Context context, object[] args)
+        public object CancelPendingNotifications(Context context, object[] args)
 	{
             LocalNotify.Notify.CancelPendingNotifications();
             return null;

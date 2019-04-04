@@ -28,25 +28,52 @@ namespace LocalNotify
 
         public static void Now(string title, string body, string payload, bool sound=true, int badgeNumber=0)
         {
-            Later(0, title, body, payload, sound, badgeNumber);
+            Later(0, title, body, payload, sound, badgeNumber, null);
         }
 
         //----------------------------------------------------------------------
 
-        public static extern(android) void Later(int secondsFromNow, string title, string body, string payload, bool sound=true,
-                                                 int badgeNumber=0)
+        public static extern(android) void Later(int secondsFromNow, string title,
+                                                 string body, string payload, bool sound=true,
+                                                 int badgeNumber=0,
+                                                 Fuse.Scripting.Object channelInfo)
         {
-            AndroidImpl.Later(title, body, sound, payload, secondsFromNow);
+            string channelId = null;
+            if (channelInfo != null)
+            {
+                channelId = (string)channelInfo["id"];
+                if (channelId == null) throw new Exception("channel id is mandatory if channelInfo is specified");
+                var name = (string)channelInfo["channelName"];
+                var description = (string)channelInfo["description"];
+                var importanceStr = (string)channelInfo["importance"];
+                // https://developer.android.com/reference/android/support/v4/app/NotificationManagerCompat.html#IMPORTANCE_DEFAULT
+                int importance = -1000;
+                if (importanceStr == "IMPORTANCE_DEFAULT") importance = 3;
+                else if (importanceStr == "IMPORTANCE_HIGH") importance = 4;
+                else if (importanceStr == "IMPORTANCE_LOW") importance = 2;
+                else if (importanceStr == "IMPORTANCE_MAX") importance = 5;
+                else if (importanceStr == "IMPORTANCE_MIN") importance = 1;
+                else if (importanceStr == "IMPORTANCE_NONE") importance = 0;
+                else if (importanceStr == "IMPORTANCE_UNSPECIFIED")  importance =-1000;
+                else importance = 3;
+
+                AndroidImpl.CreateNotificationChannel(channelId, name, importance, description);
+            }
+            AndroidImpl.Later(title, body, sound, payload, channelId, secondsFromNow);
         }
 
-        public static extern(iOS) void Later(int secondsFromNow, string title, string body, string payload, bool sound=true,
-                                             int badgeNumber=0)
+        public static extern(iOS) void Later(int secondsFromNow, string title, string body,
+                                             string payload, bool sound=true,
+                                             int badgeNumber=0,
+                                             Fuse.Scripting.Object channelInfo = null)
         {
             iOSImpl.Later(title, body, sound, payload, secondsFromNow, badgeNumber);
         }
 
-        public static extern(!MOBILE) void Later(int secondsFromNow, string title, string body, string payload, bool sound=true,
-                                                 int badgeNumber=0)
+        public static extern(!MOBILE) void Later(int secondsFromNow, string title,
+                                                 string body, string payload, bool sound=true,
+                                                 int badgeNumber=0,
+                                                 object channelInfo = null)
         {
             debug_log "Sorry LocalNotify is not supported on this backend";
         }

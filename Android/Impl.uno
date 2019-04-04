@@ -19,6 +19,7 @@ namespace LocalNotify
                     "android.app.AlarmManager",
                     "android.app.Notification",
                     "android.app.NotificationManager",
+                    "android.app.NotificationChannel",
                     "android.app.PendingIntent",
                     "android.content.res.Resources",
                     "android.graphics.BitmapFactory",
@@ -91,11 +92,12 @@ namespace LocalNotify
         }
 
         [Foreign(Language.Java)]
-        public static void Later(string title, string body, bool sound, string strPayload, int delaySeconds=0)
+        public static void Later(string title, string body, bool sound, string strPayload,
+                                 String channelId, int delaySeconds=0)
         @{
-        android.app.Activity currentActivity = com.fuse.Activity.getRootActivity();
-        android.content.Intent intent =
-        new android.content.Intent(currentActivity, com.fusedCompound.LocalNotify.LocalNotificationReceiver.class);
+            android.app.Activity currentActivity = com.fuse.Activity.getRootActivity();
+            android.content.Intent intent =
+                new android.content.Intent(currentActivity, com.fusedCompound.LocalNotify.LocalNotificationReceiver.class);
 
             int id = @{NextID():Call()};
 
@@ -103,12 +105,29 @@ namespace LocalNotify
             intent.putExtra("title", title);
             intent.putExtra("body", body);
             intent.putExtra("sound", sound);
+            intent.putExtra("channelId", channelId);
             intent.putExtra(@{ACTION}, strPayload.toString());
 
-        Calendar alarmTime = Calendar.getInstance();
-        alarmTime.add(Calendar.SECOND, delaySeconds);
+            Calendar alarmTime = Calendar.getInstance();
+            alarmTime.add(Calendar.SECOND, delaySeconds);
 
-        com.fusedCompound.LocalNotify.AlarmUtils.addAlarm(currentActivity, intent, id, alarmTime);
+            com.fusedCompound.LocalNotify.AlarmUtils.addAlarm(currentActivity, intent, id, alarmTime);
+        @}
+
+        [Foreign(Language.Java), ForeignFixedNameAttribute]
+        public static void CreateNotificationChannel(string id,
+                                                     string name,
+                                                     int importance,
+                                                     string description)
+        @{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            {
+                Context context = com.fuse.Activity.getRootActivity();
+                NotificationChannel channel = new NotificationChannel(id, name, importance);
+                channel.setDescription(description);
+                NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.createNotificationChannel(channel);
+            }
         @}
 
         [Foreign(Language.Java), ForeignFixedNameAttribute]
@@ -124,6 +143,7 @@ namespace LocalNotify
             boolean sound = (boolean)intent.getBooleanExtra("sound", false);
             String payload = intent.getStringExtra(ACTION);
             int id = intent.getIntExtra("id", 0);
+            String channelId = intent.getStringExtra("channelId");
 
             if (com.fusedCompound.LocalNotify.LocalNotificationReceiver.InForeground)
             {
@@ -144,6 +164,11 @@ namespace LocalNotify
                     .setAutoCancel(true)
                     .setVibrate(new long[] { 1000L, 1000L })
                     .setContentIntent(contentIntent);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                {
+                    notificationBuilder.setChannelId(channelId);
+                }
 
                 if(sound)
                 {

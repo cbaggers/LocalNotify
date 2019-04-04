@@ -8,7 +8,9 @@
     "Fuse.Elements",
     "Fuse.Reactive",
     "Fuse.Scripting",
-    "Fuse.Common"
+    "Fuse.Common",
+    "Fuse",
+    "FuseJS",
   ],
   "Includes": [
     "iOS/Impl.uno:Source",
